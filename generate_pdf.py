@@ -70,7 +70,10 @@ def make_pdf(data):
     c.showPage()
 
     # ── PAGES 3-7: Static slides ──
-    for n in [3, 4, 5, 6, 7]: slide(n); c.showPage()
+    for n in [3, 4]: slide(n); c.showPage()
+    if qty_cb  > 0: slide(5); c.showPage()
+    if qty_bv  > 0: slide(6); c.showPage()
+    if qty_inf > 0: slide(7); c.showPage()
 
     # ── PAGE 8: Budget — black + gold border, NO bull image ──
     black_page_bordered()
@@ -91,6 +94,16 @@ def make_pdf(data):
             c.setFont("Times-Bold", 30); c.setFillColor(white)
             c.drawCentredString(W/2, y - 36, fmt(qty * precio))
             y -= 100
+        for ex in extras:
+            art = ex.get("articulo", "")
+            units = int(ex.get("unidades", 0))
+            punit = float(ex.get("precio_unidad", 0))
+            total_ex = units * punit
+            c.setFont("Times-Italic", 22); c.setFillColor(gold)
+            c.drawCentredString(W/2, y, f"{art} x{units} :")
+            c.setFont("Times-Roman", 22); c.setFillColor(white)
+            c.drawCentredString(W/2, y - 28, fmt(total_ex))
+            y -= 70
 
     else:
         # ── PRESUPUESTO FINAL: menú elegido + personalizaciones + total ──
