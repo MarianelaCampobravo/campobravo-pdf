@@ -46,6 +46,7 @@ def make_pdf(data):
     fecha    = data.get("fecha_evento", "")
     sucursal = data.get("sucursal", "")
     notas    = data.get("notas", "")
+    horario  = data.get("horario", "")       # str libre  o  [{hora, actividad}, ...]
     modo     = data.get("modo", "inicial")   # "inicial" | "final"
     qty_cb     = int(data.get("qty_cb", 0))
     qty_bv     = int(data.get("qty_bv", 0))
@@ -67,6 +68,25 @@ def make_pdf(data):
     details = [d for d in [contacto, fecha, f"{total_pax} personas", sucursal] if d]
     for i, line in enumerate(details):
         c.drawCentredString(W/2, H - 436 - i*36, line)
+
+    # ── Horario del evento (opcional) ──
+    if horario:
+        y_h = H - 436 - len(details)*36 - 34
+        c.setFont("Times-BoldItalic", 18); c.setFillColor(gold)
+        c.drawCentredString(W/2, y_h, "Horario")
+        y_h -= 28
+        c.setFont("Times-Roman", 15); c.setFillColor(gold)
+        if isinstance(horario, str):
+            for line in textwrap.wrap(horario, 60)[:8]:
+                c.drawCentredString(W/2, y_h, line)
+                y_h -= 22
+        elif isinstance(horario, list):
+            for item in horario[:10]:
+                hora = str(item.get("hora", "")).strip()
+                actividad = str(item.get("actividad", "")).strip()
+                texto = f"{hora} — {actividad}" if hora else actividad
+                c.drawCentredString(W/2, y_h, texto)
+                y_h -= 22
     c.showPage()
 
     # ── PAGES 3-7: Static slides ──
