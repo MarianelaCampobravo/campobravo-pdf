@@ -81,33 +81,18 @@ def make_pdf(data):
     # ── PAGE 1: Cover ──
     slide(1); c.showPage()
 
-    # ── PAGE 2: Client data — black + gold border, logo + Nombre bold + lista italic ──
+    # ── PAGE 2: Client data — black + gold border, centered data with Playfair Display ──
     black_page_bordered()
 
-    # Logo del toro (misma imagen que la tapa) — fondo negro convertido a transparente
-    bull_img = b64img(BULL_B64).convert("RGBA")
-    _px = bull_img.load()
-    for _y in range(bull_img.size[1]):
-        for _x in range(bull_img.size[0]):
-            _r, _g, _b, _a = _px[_x, _y]
-            if _r < 30 and _g < 30 and _b < 30:
-                _px[_x, _y] = (_r, _g, _b, 0)
-    logo_w = 130
-    logo_h = logo_w * bull_img.size[1] / bull_img.size[0]
-    logo_x = (W - logo_w) / 2
-    logo_y = H - 470
-    c.drawImage(ImageReader(bull_img), logo_x, logo_y, logo_w, logo_h,
-                preserveAspectRatio=True, mask='auto')
-
-    # "Nombre" — Playfair Display Bold
-    c.setFont("PlayfairBold", 34); c.setFillColor(gold)
-    nombre_y = logo_y - 46
+    # "Nombre" — Playfair Display Bold, centrado
+    c.setFont("PlayfairBold", 36); c.setFillColor(gold)
+    nombre_y = H - 280
     c.drawCentredString(W/2, nombre_y, cliente or "Nombre")
 
     # Lista de datos — Playfair Display Italic (contacto, fecha, horario, personas, sucursal)
-    c.setFont("PlayfairItalic", 17); c.setFillColor(gold)
+    c.setFont("PlayfairItalic", 16); c.setFillColor(gold)
     details = [d for d in [contacto, fecha, horario_str, f"{total_pax} personas", sucursal] if d]
-    y_line = nombre_y - 42
+    y_line = nombre_y - 48
     for line in details:
         c.drawCentredString(W/2, y_line, line)
         y_line -= 26
@@ -201,6 +186,18 @@ def make_pdf(data):
     else:
         y = min(y - 30, 520)
 
+    # Observaciones: Notas del cliente (si hay)
+    if notas:
+        c.setFont("Times-BoldItalic", 20); c.setFillColor(gold)
+        c.drawCentredString(W/2, y, "Observaciones:")
+        c.setFont("Times-Roman", 11); c.setFillColor(white)
+        notas_lines = textwrap.wrap(notas, 85)
+        notas_y = y - 24
+        for line in notas_lines[:8]:
+            c.drawCentredString(W/2, notas_y, line)
+            notas_y -= 14
+        y = notas_y - 20
+    
     # Notas: Cláusula de gluten (siempre)
     c.setFont("Times-BoldItalic", 20); c.setFillColor(gold)
     c.drawCentredString(W/2, y, "Notas:")
