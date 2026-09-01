@@ -2,3 +2,5 @@ flask
 reportlab
 pillow
 flask-cors
+pymupdf
+requests

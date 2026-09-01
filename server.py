@@ -7,6 +7,9 @@ CORS(app)
 
 sys.path.insert(0, os.path.dirname(__file__))
 
+from carta_routes import register_carta_routes
+register_carta_routes(app)
+
 @app.route('/generate-pdf', methods=['POST'])
 def generate_pdf():
     try:
