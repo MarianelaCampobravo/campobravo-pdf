@@ -10,14 +10,6 @@ sys.path.insert(0, os.path.dirname(__file__))
 from carta_routes import register_carta_routes
 register_carta_routes(app)
 
-@app.route('/debug-token', methods=['GET'])
-def debug_token():
-    import os
-    token = os.environ.get("GITHUB_TOKEN")
-    if not token:
-        return jsonify({"has_token": False})
-    return jsonify({"has_token": True, "length": len(token), "starts_with": token[:4]})
-
 @app.route('/generate-pdf', methods=['POST'])
 def generate_pdf():
     try:
